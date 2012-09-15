@@ -1,0 +1,40 @@
+<html>
+    <head>
+         <title>Nix stats</title>
+        <style>
+        body { color : #2f2f2f; }
+        #content { width : 1000px; margin: 30px auto 0px auto; }
+        h1 { text-align: center; }
+        table { width : 600px; margin : 30px auto 0 auto; }
+        th { background : #cdcdff; }
+        td { background : #cdcdee; }
+        #notice { display: block; width: 780px; margin : 32px auto 0 auto; }
+        </style>
+    </head>
+    <body>
+    <div id="content">
+        <h1>Nix site list</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Url</th><th>Upstream name</th><th>Upstream uri</th><th>Fastcgi (php)</th><th>Upstream process (PID/Program name)</th><th>Health check</tt>
+                </tr>
+            </thead>
+            <tbody>
+                {% for site in sites %}
+                    <tr>
+<td><a href="http://{{ site.server_name }}">{{ site.server_name }}</a></td>
+<td>{{ site.upstream_name }}</td>
+<td>{{ site.upstream_uri }}</td>
+<td>{{ site.fastcgi }}</td>
+<td>{{ site.process }}</td>
+<td>{% if site.upstream_uri|length and site.process|length %} <img alt="Running" src="/static/success.gif" /> {% elif site.upstream_uri|length and not site.process|length %} <img alt="Stopped" src="/static/error.gif" /> {% else %} {% endif %}</td>
+</tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <span id="notice">Generated on: {{ timestamp }} with Python {{ python_version }}</span>
+    </div>
+    </body>
+</html>
+    
