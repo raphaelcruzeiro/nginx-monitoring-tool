@@ -2,6 +2,7 @@ import sys
 import shlex, subprocess
 from datetime import datetime
 from django.shortcuts import render_to_response, RequestContext
+from settings import SERVER_NAME
 
 def get_mem_info():
     result = {}
@@ -66,4 +67,4 @@ def index(request):
            site['upstream_name'] = ''
            site['upstream_uri'] = ''
            #site['process'] = '-'
-    return render_to_response('index.html', { 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      
+    return render_to_response('index.html', {'server_name' : SERVER_NAME, 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      

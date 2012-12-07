@@ -157,3 +157,13 @@ LOGGING = {
         },
     }
 }
+
+SERVER_NAME = 'Server Name goes here'
+
+try:
+    from local_settings import *
+except:
+    pass
+
+
+
