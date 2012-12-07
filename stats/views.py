@@ -3,9 +3,19 @@ import shlex, subprocess
 from datetime import datetime
 from django.shortcuts import render_to_response, RequestContext
 
+def get_mem_info():
+    result = {}
+    command = 'free -m'
+    out, err = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE).communicate()
+    values = out.split()
+    for i, v in enumerate(values):
+        if i < 6:
+            result[v] = values[i + 7]
+    return result
+
 def search_process(list, upstream):
     for line in list.split('\n'):
-        if line.find(upstream) != -1:
+        if line.find(':%s' % upstream.split(':')[-1]) != -1:
             return ' '.join(line.split()).split(' ')[-1]
     return ''
 
@@ -56,5 +66,4 @@ def index(request):
            site['upstream_name'] = ''
            site['upstream_uri'] = ''
            #site['process'] = '-'
-    return render_to_response('index.html', { 'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })
-       
+    return render_to_response('index.html', { 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      

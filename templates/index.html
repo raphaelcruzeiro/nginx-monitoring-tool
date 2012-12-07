@@ -13,9 +13,27 @@
     </head>
     <body>
     <div id="content">
-        <h1>Nix site list</h1>
+        <h1>Nix stats</h1>
         <table>
             <thead>
+                <tr><th colspan="6">Memory info:</th></tr>
+                <tr>
+                {% for k, v in mem_info.items %}
+                    <th>{{ k|capfirst }}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {% for k, v in mem_info.items %}
+                    <td>{{ v }}</td>
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr><th colspan="6">Site list:</th></tr>
                 <tr>
                     <th>Url</th><th>Upstream name</th><th>Upstream uri</th><th>Fastcgi (php)</th><th>Upstream process (PID/Program name)</th><th>Health check</tt>
                 </tr>
@@ -36,5 +54,4 @@
         <span id="notice">Generated on: {{ timestamp }} with Python {{ python_version }}</span>
     </div>
     </body>
-</html>
-    
+</html>    
