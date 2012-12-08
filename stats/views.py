@@ -4,6 +4,27 @@ from datetime import datetime
 from django.shortcuts import render_to_response, RequestContext
 from settings import SERVER_NAME
 
+def get_w():
+    result = {}
+    command = 'w'
+    out, err = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE).communicate()
+    splitted = out.split('\n')
+    header = splitted[0]
+    result['load averages'] = [x.strip() for x in header[header.index('load average:') + len('lead average:'):].split(',')]
+    header = header[:header.index('load') - 3]
+    result['users'] = header.split(',')[-1].strip()
+    header = header[:header.index(result['users'])].strip()
+    result['time'] = header[:8]
+    result['uptime'] = header.replace(result['time'], '').strip()[:-1]
+    result['user_list'] = {}
+    result['user_list']['headers'] = splitted[1].split()
+    result['user_list']['values'] = []
+    splitted = splitted[2:]
+    for line in splitted:
+        result['user_list']['values'].append(line.split()) 
+
+    return result
+
 def get_mem_info():
     result = {}
     command = 'free -m'
@@ -67,4 +88,4 @@ def index(request):
            site['upstream_name'] = ''
            site['upstream_uri'] = ''
            #site['process'] = '-'
-    return render_to_response('index.html', {'server_name' : SERVER_NAME, 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      
+    return render_to_response('index.html', {'server_name' : SERVER_NAME, 'w' : get_w(), 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      

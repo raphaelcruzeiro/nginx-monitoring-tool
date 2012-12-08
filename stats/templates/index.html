@@ -7,13 +7,53 @@
         h1 { text-align: center; }
         table { width : 600px; margin : 30px auto 0 auto; }
         th { background : #cdcdff; }
-        td { background : #cdcdee; }
+        td { background : #cdcdee; text-align: center; }
         p { text-align : center; }
         </style>
     </head>
     <body>
     <div id="content">
         <h1>{{  server_name  }} stats</h1>
+        <table>
+            <thead>
+                <tr>
+                    {% for k, v in w.items %}
+                        {% if k != 'user_list' %}<th {% if k == 'load averages' %}colspan="3"{% endif %}>{{ k|capfirst  }}</th>{% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for k, v in w.items %}
+                    {% if k != 'user_list' %}
+                    {% if k == 'load averages' %}
+                        {% for v2 in v %}
+                            <td>{{ v2 }}</td>
+                        {% endfor %}
+                    {% else %}
+                        <td>{{ v }}</td>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                {% for v in w.user_list.headers %}
+                    <th>{{ v }}</td>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in w.user_list.values %}
+                    <tr>
+                        {% for v in line %}
+                            <td>{{ v }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}            
+            </tbody>
+        </table>
         <table>
             <thead>
                 <tr><th colspan="6">Memory info:</th></tr>
