@@ -16,6 +16,7 @@
         <h1>{{  server_name  }} stats</h1>
         <table>
             <thead>
+                <tr><th colspan="4">General stats:</th></tr>
                 <tr>
                     {% for k, v in w.items %}
                         {% if k != 'user_list' %}<th {% if k == 'load averages' %}colspan="3"{% endif %}>{{ k|capfirst  }}</th>{% endif %}
@@ -38,6 +39,7 @@
         </table>
         <table>
             <thead>
+                <tr><th colspan="8">Logged users:</th></tr>
                 <tr>
                 {% for v in w.user_list.headers %}
                     <th>{{ v }}</td>
