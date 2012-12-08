@@ -8,7 +8,7 @@
         table { width : 600px; margin : 30px auto 0 auto; }
         th { background : #cdcdff; }
         td { background : #cdcdee; }
-        #notice { display: block; width: 780px; margin : 32px auto 0 auto; }
+        p { text-align : center; }
         </style>
     </head>
     <body>
@@ -51,7 +51,12 @@
                 {% endfor %}
             </tbody>
         </table>
-        <span id="notice">Generated on: {{ timestamp }} with Python {{ python_version }}</span>
+        <p id="notice">Generated on: {{ timestamp }} with Python {{ python_version }}</p>
+        <p id="copyright">Copyright (C) 2012 Raphael Cruzeiro</p>
+        <p id="license">Nginx Monitoring Tool is free software and comes with ABSOLUTELY NO WARRANTY.  You are
+  welcome to redistribute it under the terms of the GNU General Public
+  License.  For more information about these matters, see <a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a>.</p>
+        <p>The source code can be fount at: <a href="https://github.com/raphaelcruzeiro/nginx-monitoring-tool">https://github.com/raphaelcruzeiro/nginx-monitoring-tool</a>.</p>
     </div>
     </body>
 </html>    
