@@ -1,7 +1,9 @@
 import sys
+import time
+import os
 import shlex, subprocess
 from datetime import datetime
-from django.shortcuts import render_to_response, RequestContext
+from django.shortcuts import render_to_response, RequestContext, redirect
 from settings import SERVER_NAME
 
 def get_w():
@@ -21,7 +23,12 @@ def get_w():
     result['user_list']['values'] = []
     splitted = splitted[2:]
     for line in splitted:
-        result['user_list']['values'].append(line.split()) 
+        values = line.split()
+        if len(values) > 7:
+            for i in range(8, len(values)):
+                values += values[i]
+            values = values[:8]
+        result['user_list']['values'].append(values) 
 
     return result
 
@@ -84,8 +91,54 @@ def index(request):
            site['upstream_name'] = _upstreams[0]['name']
            site['upstream_uri'] = _upstreams[0]['uri']
            site['process'] = search_process(out, site['upstream_uri'])
+           site['pid'] = site['process'].split('/')[0] if site['process'].find('python') != -1 else None
         else:
            site['upstream_name'] = ''
            site['upstream_uri'] = ''
            #site['process'] = '-'
     return render_to_response('index.html', {'server_name' : SERVER_NAME, 'w' : get_w(), 'mem_info' : get_mem_info() ,'sites' : sites, 'timestamp' : datetime.now().strftime("%A %d, %B %Y on %I:%M %p"), 'python_version' : sys.version })      
+
+
+def restart_process(request):
+    if request.method == 'POST':
+        pid = request.POST['pid']
+        command = 'lsof'
+        out, err = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE).communicate()
+        lines = [l.split() for l in out.split('\n')]
+        lines = [l  for l in lines if len(l) > 0]
+        lines = [l for l in lines if l[1] == pid]
+        line = [l for l in lines if l[3] == 'txt'][0]
+        if line[0].find('gunicorn') > -1:
+            cwd = line[-1].replace('/env/bin/python', '')
+            gunicorn_path = cwd
+            conf_path = cwd
+            app_path = cwd
+            
+            def search_file(filename, root, exclude=[]):
+                result = None
+                for cur, dirnames, filenames in os.walk(root):
+                    if filename in filenames:
+                        proceed = True
+                        for d in exclude:
+                            if cur.find(d) > -1:
+                                proceed = False
+                        if proceed:
+                            result = cur
+                            break
+                return result
+
+            print cwd
+
+            gunicorn_path = search_file('gunicorn_django', gunicorn_path)
+            conf_path = search_file('gunicorn.conf.py', conf_path)
+            app_path = search_file('manage.py', app_path, ['site-packages'])
+           
+            command = 'kill %s' % pid
+            out, err = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE).communicate()
+
+            command = '%s/gunicorn_django -c %s/gunicorn.conf.py %s --daemon' % (gunicorn_path, conf_path, app_path)
+            print command
+            out, err = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE).communicate()
+           
+            time.sleep(2)
+            return redirect('/')

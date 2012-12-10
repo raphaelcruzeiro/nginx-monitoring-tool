@@ -73,11 +73,12 @@
                 </tr>
             </tbody>
         </table>
+        <form action="restart_process/" method="post">
         <table>
             <thead>
-                <tr><th colspan="6">Site list:</th></tr>
+                <tr><th colspan="7">Site list:</th></tr>
                 <tr>
-                    <th>Url</th><th>Upstream name</th><th>Upstream uri</th><th>Fastcgi (php)</th><th>Upstream process (PID/Program name)</th><th>Health check</tt>
+                    <th>Url</th><th>Upstream name</th><th>Upstream uri</th><th>Fastcgi (php)</th><th>Upstream process (PID/Program name)</th><th>Health check</th><th></th>
                 </tr>
             </thead>
             <tbody>
@@ -89,10 +90,12 @@
 <td>{{ site.fastcgi }}</td>
 <td>{{ site.process }}</td>
 <td>{% if site.upstream_uri|length and site.process|length %} <img alt="Running" src="/static/success.gif" /> {% elif site.upstream_uri|length and not site.process|length %} <img alt="Stopped" src="/static/error.gif" /> {% else %} {% endif %}</td>
+<td>{% if site.pid %}<button type="submit" name="pid" value="{{ site.pid }}">Restart</button>{% endif %}</td>
 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        </form>
         <p id="notice">Generated on: {{ timestamp }} with Python {{ python_version }}</p>
         <p id="copyright">Copyright (C) 2012 Raphael Cruzeiro</p>
         <p id="license">Nginx Monitoring Tool is free software and comes with ABSOLUTELY NO WARRANTY.  You are
